@@ -1,18 +1,53 @@
 function functionA() {
 	a = document.getElementById("circle#kota");
-	
+
 	if (a != null)
 		a.style.fill = 'yellow';
 }
 
-function functionBB() {
+function onChangeHeight() {
 	a = document.getElementById("stupidId");
-	
+
 	if (a != null)
 		a.setAttributeNS(null, "height", 200);
 }
 
-function CreateSVG() {
+function drawGrid(root) {
+	var i;
+	var j;
+	var xmlns = "http://www.w3.org/2000/svg";
+	for (i = 0; i < 10; i++) {
+		var h = document.createElementNS(xmlns, "line");
+		h.setAttributeNS(null, "id", "line_H_".concat(i.toString()));
+		h.setAttributeNS(null, "x1", 0);
+		h.setAttributeNS(null, "y1", i * 30);
+		h.setAttributeNS(null, "x2", 270);
+		h.setAttributeNS(null, "y2", i * 30);
+
+		var v = document.createElementNS(xmlns, "line");
+		v.setAttributeNS(null, "id", "line_V_".concat(i.toString()));
+		v.setAttributeNS(null, "y1", 0);
+		v.setAttributeNS(null, "x1", i * 30);
+		v.setAttributeNS(null, "y2", 270);
+		v.setAttributeNS(null, "x2", i * 30);
+
+		root.appendChild(h);
+		root.appendChild(v);
+		if (i != 9)
+			for (j = 0; j < 9; j++) {
+
+				var S = document.createElementNS(xmlns, "text");
+				S.setAttribute('x', i * 30);
+				S.setAttribute('y', j * 30 + 20);
+				S.textContent = 'IJ'.concat(i.toString(), j.toString());
+
+				root.appendChild(S);
+
+			}
+	}
+}
+
+function onLoad() {
 	var xmlns = "http://www.w3.org/2000/svg";
 	var boxWidth = 300;
 	var boxHeight = 300;
@@ -23,49 +58,12 @@ function CreateSVG() {
 					+ boxHeight);
 	svgElem.setAttributeNS(null, "width", boxWidth);
 	svgElem.setAttributeNS(null, "height", boxHeight);
+
 	svgElem.style.display = "block";
 
-	var g = document.createElementNS(xmlns, "g");
-	svgElem.appendChild(g);
-	g.setAttributeNS(null, 'transform', 'matrix(1,0,0,-1,0,300)');
-
-	svgElem.setAttributeNS(null, "id", "stupidId");
-
-	// draw linear gradient
-	var defs = document.createElementNS(xmlns, "defs");
-	var grad = document.createElementNS(xmlns, "linearGradient");
-	grad.setAttributeNS(null, "id", "gradient");
-	grad.setAttributeNS(null, "x1", "0%");
-	grad.setAttributeNS(null, "x2", "0%");
-	grad.setAttributeNS(null, "y1", "100%");
-	grad.setAttributeNS(null, "y2", "0%");
-	var stopTop = document.createElementNS(xmlns, "stop");
-	stopTop.setAttributeNS(null, "offset", "0%");
-	stopTop.setAttributeNS(null, "stop-color", "#ff0000");
-	grad.appendChild(stopTop);
-	var stopBottom = document.createElementNS(xmlns, "stop");
-	stopBottom.setAttributeNS(null, "offset", "100%");
-	stopBottom.setAttributeNS(null, "stop-color", "#0000ff");
-	grad.appendChild(stopBottom);
-	defs.appendChild(grad);
-	g.appendChild(defs);
-
-	// draw borders
-	var coords = "M 0, 0";
-	coords += " l 0, 300";
-	coords += " l 300, 0";
-	coords += " l 0, -300";
-	coords += " l -300, 0";
-
-	var path = document.createElementNS(xmlns, "path");
-	path.setAttributeNS(null, 'stroke', "#000000");
-	path.setAttributeNS(null, 'stroke-width', 10);
-	path.setAttributeNS(null, 'stroke-linejoin', "round");
-	path.setAttributeNS(null, 'd', coords);
-	path.setAttributeNS(null, 'fill', "url(#gradient)");
-	path.setAttributeNS(null, 'opacity', 1.0);
-	g.appendChild(path);
+	drawGrid(svgElem);
 
 	var svgContainer = document.getElementById("svgContainer");
+	svgElem.setAttributeNS(null, "stroke", "black");
 	svgContainer.appendChild(svgElem);
 }

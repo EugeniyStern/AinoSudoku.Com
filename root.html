@@ -2,22 +2,21 @@
 <html>
 <script src="code.js"></script>
 
-    <script>
-    function functionB () {
-  	var a = document.getElementById('kota');
-	var b = document.querySelectorAll("*");
-    };
+<script>
+	function functionB() {
+		var a = document.getElementById('kota');
+		var b = document.querySelectorAll("*");
+	};
+</script>
 
-    </script>
-
-<body>
-
+<body onLoad="onLoad()">
 
 
 
-<div id="svgContainer"></div>
- <button onclick="CreateSVG();">Second</button>
- <button onclick="functionBB();">Stupid</button>
+
+	<div id="svgContainer"></div>
+	<button onclick="onLoad();">onLoad</button>
+	<button onclick="onChangeHeight();">onChangeHeight</button>
 </body>
 
 </html>
