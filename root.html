@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<head>
 <script src="code.js"></script>
 
 <script>
@@ -9,14 +10,51 @@
 	};
 </script>
 
+
+<style type="text/css">
+svg text1 {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+/* foreignObject * { */
+/* 	pointer-events: none; */
+/* } */
+
+svg text {
+	font-family: Helvetica, sans-serif;
+	font-size: '40px';
+	bodycolor: #333366;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	cursor: move;
+}
+
+/* svg line { */
+/* 	pointer-events: none; */
+/* } */
+
+html, body {
+	margin: 0;
+	padding: 0;
+	overflow: hidden
+}
+
+svg {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+}
+</style>
+
+</head>
 <body onLoad="onLoad()">
-
-
-
-
 	<div id="svgContainer"></div>
-	<button onclick="onLoad();">onLoad</button>
-	<button onclick="onChangeHeight();">onChangeHeight</button>
+<!-- 	<button onclick="onLoad();">onLoad</button> -->
+<!-- 	<button onclick="onChangeHeight();">onChangeHeight</button> -->
 </body>
 
 </html>
