@@ -8,16 +8,42 @@ function onChangeHeight() {
 	a.textContent = '6';
 }
 
+
+
 function drawGrid(root) {
 
 	var active_i = 0;
 	var active_j = 0;
 	var active_f = 0;
 
-	root.addEventListener('mousedown', startDrag);
-	root.addEventListener('mousemove', drag);
-	root.addEventListener('mouseup', endDrag);
-	root.addEventListener('mouseleave', endDrag);
+	
+	function touchStartOrMouseDown(evt) {
+		evt.target.setAttributeNS(null, "fill-opacity", 0.3);
+
+		id = evt.target.id;
+
+		active_i = parseInt(id.substring(4, 5));
+		active_j = parseInt(id.substring(5, 6));
+	}
+
+	function touchEndOrMouseUp(evt) {
+
+		
+		active_i = 0;
+		active_j = 0;
+		active_f = 0;	
+		
+	}
+	
+	
+	
+	root.addEventListener('mousedown', touchStartOrMouseDown);
+	root.addEventListener('touchstart', touchStartOrMouseDown);
+	// root.addEventListener('mousemove', drag);
+
+//	root.addEventListener('mouseup', touchStartOrMouseDown);
+//	root.addEventListener('mouseleave', touchStartOrMouseDown);
+//	root.addEventListener('touchend', touchEndOrMouseUp);
 
 	function mouseOver(evt) {
 		evt.target.setAttributeNS(null, "fill-opacity", 0.3);
@@ -94,14 +120,14 @@ function drawGrid(root) {
 
 					// look and fill
 					Small_Square.setAttributeNS(null, "fill", "red");
-					Small_Square.addEventListener('mouseover', mouseOver);
-					Small_Square.addEventListener('mouseout', mouseOut);
+					// Small_Square.addEventListener('mouseover', mouseOver);
+					// Small_Square.addEventListener('mouseout', mouseOut);
 
-//					Small_Square.addEventListener('touchstart', startDrag);
-//					Small_Square.addEventListener('touchmove', drag);
-//					 svg.addEventListener('touchend', endDrag);
-//					 svg.addEventListener('touchleave', endDrag);
-//					 svg.addEventListener('touchcancel', endDrag);
+					Small_Square.addEventListener('touchstart', startDrag);
+					Small_Square.addEventListener('touchmove', drag);
+					// svg.addEventListener('touchend', endDrag);
+					// svg.addEventListener('touchleave', endDrag);
+					// svg.addEventListener('touchcancel', endDrag);
 
 					root.appendChild(Small_Square);
 
@@ -117,6 +143,8 @@ function drawGrid(root) {
 
 					root.appendChild(S);
 				}
+
+	// number at the right side
 
 	for (ya = 0; ya < 3; ya++)
 		for (yb = 0; yb < 3; yb++) {
@@ -146,6 +174,7 @@ function drawGrid(root) {
 	var selectedElement = false;
 
 	function startDrag(evt) {
+		return;
 		if (evt.target.classList.contains('draggable')) {
 			selectedElement = evt.target;
 			keep_X = parseInt(selectedElement.getAttribute("x"));
