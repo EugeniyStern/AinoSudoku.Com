@@ -22,6 +22,23 @@ def polar_func_square(alfa):
     R = s2s2 / (abs(np.cos(alfa + np.pi / 4)) + abs(np.sin(alfa + np.pi / 4)))
     return np.cos(alfa) * R, np.sin(alfa) * R
 
+# def polar_func_square_with_ears(alfa):
+#     
+#     s2s2 = np.sqrt(2.0)
+#     R = s2s2 / (abs(np.cos(alfa + np.pi / 4)) + abs(np.sin(alfa + np.pi / 4)))
+#     
+#     if alfa > np.pi * 0.72 and alfa < np.pi * 0.80:
+#         R = R * 0.85
+#         
+#     if alfa > np.pi * 1.15 and alfa < np.pi * 1.25:
+#         R = R * 0.85
+#                
+#     return np.cos(alfa) * R, np.sin(alfa) * R
+
+
+def polar_circle(alfa):
+    return np.cos(alfa), np.sin(alfa)
+
 
 def polar_func_device_shape(alfa):
     s2s2 = np.sqrt(2.0)
@@ -118,9 +135,9 @@ def draw_figure(N_of_points, x0, y0, R, kx, ky, polar_func):
         y_prev = y
         
         x, y = polar_func(alfa)
-         
+        
         x = int(kx * R * x * 100) / 100 + x0
-        y = int(ky * R * y * 100) / 100 + y0
+        y = int(ky * R * y * 100) / 100 + y0      
       
         if i > 0:
             L += np.sqrt((x - x_prev) * (x - x_prev) + (y - y_prev) * (y - y_prev))
@@ -160,7 +177,6 @@ def add_path(svg_file, dxf_msp, points, points_np):
 
 
 def panel(svg_file, msp, L, Center_X, Center_Y, outline):
-    
    
 # Device shape
     points, points_np, dl = draw_figure(N_of_points=256, x0=Center_X, y0=Center_Y, R=0.5, kx=380, ky=372, polar_func=polar_func_device_shape)
@@ -213,6 +229,46 @@ def panel(svg_file, msp, L, Center_X, Center_Y, outline):
     return L
 
 
+def angle_part_a(Center_X, Center_Y, kx_k, ky_k, svg_file, msp, ears=0):
+    L = 0
+    
+    if ears == 0:
+        points, points_np, dl = draw_fig_half_with_internal(N_of_points=256, x0=Center_X,
+                                                            y0=Center_Y, R=0.5, kx=380 * kx_k,
+                                                            ky=372 * ky_k, polar_func=polar_func_device_shape,
+                                                            R_i=0.5, kx_i=342 * kx_k, ky_i=327.4 * ky_k,
+                                                            polar_func_int=polar_func_square,
+                                                            alfa_shift_a=np.pi / 4)
+    else:
+        points, points_np, dl = draw_fig_half_with_internal(N_of_points=256, x0=Center_X,
+                                                            y0=Center_Y, R=0.5, kx=380 * kx_k,
+                                                            ky=372 * ky_k, polar_func=polar_func_device_shape,
+                                                            R_i=0.5, kx_i=302 * kx_k, ky_i=327.4 * ky_k,
+                                                            polar_func_int=polar_func_square,
+                                                            alfa_shift_a=np.pi / 4)
+
+    add_path(svg_file, msp, points, points_np)
+    L += dl
+    
+    for i in range(7):
+        points, points_np, dl = draw_figure(N_of_points=18, x0=Center_X + (i - 3) * 50 , y0=Center_Y + 175 * ky_k, R=3, kx=1.0, ky=1.0, polar_func=polar_circle)
+        add_path(svg_file, msp, points, points_np)
+        L += dl
+        
+        points, points_np, dl = draw_figure(N_of_points=18, x0=Center_X - 180 * kx_k , y0=Center_Y + (i - 3) * 50 , R=3, kx=1.0, ky=1.0, polar_func=polar_circle)
+        add_path(svg_file, msp, points, points_np)
+        L += dl
+        
+    if ears == 1:
+        yy = [ 40.9, 77.3, 113.7, 150.1, 186.5, 222.9, 259.3, 295.7, 31.7, 68.1, 104.5, 177.3, 213.7, 250.1, 286.5]
+        for y_ in yy:
+            points, points_np, dl = draw_figure(N_of_points=18, x0=Center_X - 171 + 14.859  , y0=Center_Y - 163.7 + y_ , R=2.0, kx=1.0, ky=1.0, polar_func=polar_circle)
+            add_path(svg_file, msp, points, points_np)
+            L += dl
+                           
+    return L
+
+
 def main():
     svg_file, dxf_file = init_files()
     
@@ -221,67 +277,61 @@ def main():
     
 # List outline
 #     points, points_np, dl = draw_figure(N_of_points=256, x0=750, y0=750, R=0.5, kx=1500, ky=1500, polar_func=polar_func_square)
-#     L += dl
 #     add_path(svg_file, msp, points, points_np)    
     
-    L = panel(svg_file, msp, L, Center_X = 220, Center_Y = 220, outline = 0 )
-    L = panel(svg_file, msp, L, Center_X = 220, Center_Y = 650, outline = 1 )
+    dl = panel(svg_file, msp, L, Center_X=220, Center_Y=220, outline=0)
+    L += dl
     
-    for i in range(24):
+    dl = panel(svg_file, msp, L, Center_X=220, Center_Y=650, outline=1)
+    L += dl
+    
+    for i in range(18):
         Center_X = 610 + i * 30
         Center_Y = 200 + i * 30
-    
-        points, points_np, dl = draw_fig_half_with_internal(N_of_points=256, x0=Center_X,
-                                                            y0=Center_Y, R=0.5, kx=380,
-                                                            ky=-372, polar_func=polar_func_device_shape,
-                                                            R_i=0.5, kx_i=342, ky_i=-327.4,
-                                                            polar_func_int=polar_func_square,
-                                                            alfa_shift_a=np.pi / 4)
-        add_path(svg_file, msp, points, points_np)
+        
+        dl = angle_part_a(Center_X, Center_Y, kx_k=1.0, ky_k=-1.0, svg_file=svg_file, msp=msp)
         L += dl
-    
-    
+        
+    for i in range(4):
+        Center_X = 610 + 18 * 30 + i * 50
+        Center_Y = 200 + 18 * 30 + i * 50
+        
+        dl = angle_part_a(Center_X, Center_Y, kx_k=1.0, ky_k=-1.0, svg_file=svg_file, msp=msp, ears=1)
+        L += dl        
+   
     for i in range(6):
         Center_X = 1300 - i * 30
         Center_Y = 200 + i * 30
     
-        points, points_np, dl = draw_fig_half_with_internal(N_of_points=256, x0=Center_X,
-                                                            y0=Center_Y, R=0.5, kx=-380,
-                                                            ky=-372, polar_func=polar_func_device_shape,
-                                                            R_i=0.5, kx_i=-342, ky_i=-327.4,
-                                                            polar_func_int=polar_func_square,
-                                                            alfa_shift_a=np.pi / 4)
-        add_path(svg_file, msp, points, points_np)
-        L += dl    
-        
+        dl = angle_part_a(Center_X, Center_Y, kx_k=-1.0, ky_k=-1.0, svg_file=svg_file, msp=msp)
+        L += dl        
         
     for i in range(6):
         Center_X = 610 + i * 30
         Center_Y = 900 - i * 30
     
-        points, points_np, dl = draw_fig_half_with_internal(N_of_points=256, x0=Center_X,
-                                                            y0=Center_Y, R=0.5, kx=380,
-                                                            ky=372, polar_func=polar_func_device_shape,
-                                                            R_i=0.5, kx_i=342, ky_i=327.4,
-                                                            polar_func_int=polar_func_square,
-                                                            alfa_shift_a=np.pi / 4)
-        add_path(svg_file, msp, points, points_np)
-        L += dl          
-
-
+        dl = angle_part_a(Center_X, Center_Y, kx_k=1.0, ky_k=1.0, svg_file=svg_file, msp=msp, ears=0)
+        L += dl     
+        
+    for i in range(8):
+        Center_X = 1000 + i * 30
+        Center_Y = 1000 + i * 30
+    
+        dl = angle_part_a(Center_X, Center_Y, kx_k=-1.0, ky_k=1.0, svg_file=svg_file, msp=msp, ears=0)
+        L += dl              
 
 #     My local laser cut service costs me ~1 USD per meter of length (plywood 10mm)
 #           fanera3d.ru
     Center_X = 220
     Center_Y = 1050
     points, points_np, dl = draw_figure(N_of_points=256, x0=Center_X, y0=Center_Y, R=0.5, kx=380, ky=372, polar_func=polar_func_device_shape)
+    
     L += dl
     add_path(svg_file, msp, points, points_np)
 
-
-    print(L)
-    M = int((L * 64) / 1000)
-    print('Rub =', M)
+    print('L = ', L)
+    M = int((L * 32) / 1000)
+    print('Rub = ', M)
     
     dxf_file.saveas("lwpolyline1.dxf")
     
